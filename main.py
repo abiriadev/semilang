@@ -15,7 +15,7 @@ def calculating(cal):
                 exit(0)
             value -= cal[i]
         i += 1
-    cal = []
+    cal.clear()
     return value
 
 def lexer(code):
@@ -37,7 +37,7 @@ def lexer(code):
                 print("Error ; Stack is Empty")
                 exit(0)
             else:
-                im = stack.pop()
+                im = stack[len(stack)-1]
                 if isN:
                     cal.append(str(n)+im)
                     n = 0
@@ -49,7 +49,11 @@ def lexer(code):
                 cal.append(n)
                 n = 0
                 isN = False
-            stack.pop()
+            if len(stack) == 0:
+                print("Error ; Stack is Empty")
+                exit(0)
+            else:
+                stack.pop()
         elif code[i] == '+':
             if isN:
                 cal.append(n)
@@ -73,6 +77,6 @@ def lexer(code):
             isN = True
         i += 1
 
-lexer("20;10;:+.:+10+10+10!")
+lexer("20;10;:.+:+10+10+10!")
 
 lexer("")
