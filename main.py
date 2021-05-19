@@ -1,82 +1,185 @@
+import os
+
 def calculating(cal):
-    value = cal[0]
-    i = 1
-    while len(cal) > i+1:
-        if cal[i] == '+':
-            i += 1
-            if cal[i] == '+' or cal[i] == '-':
-                print("Syntax Error ; Double operator")
-                exit(0)
-            value += cal[i]
-        elif cal[i] == '-':
-            i += 1
-            if cal[i] == '+' or cal[i] == '-':
-                print("Syntax Error ; Double operator")
-                exit(0)
-            value -= cal[i]
-        i += 1
-    cal.clear()
-    return value
+
+	value = cal[0]
+
+	for i in range(1,len(cal)):
+
+		if cal[i] == '+':
+
+			i += 1
+
+			if cal[i] == '+' or cal[i] == '-':
+
+				print("Syntax Error ; Double operator")
+				exit(0)
+
+			value += cal[i]
+
+
+		elif cal[i] == '-':
+
+			i += 1
+
+			if cal[i] == '+' or cal[i] == '-':
+
+				print("Syntax Error ; Double operator")
+				exit(0)
+
+			value -= cal[i]
+
+
+	cal.clear()
+
+	return value
+
+
+
+# ";"
+def gmr_1( stack , cal , n , isN ):
+
+	if isN:
+
+		cal.append(n)
+		n = 0
+		isN = False
+
+	stack.append(calculating(cal))
+
+	return stack , cal , n , isN 
+
+
+
+# ":"
+def gmr_2( stack , cal , n , isN ):
+
+	im = stack[len(stack)-1]
+
+	if isN:
+
+		cal.append(str(n)+im)
+		n = 0
+		isN = False
+
+	else:
+
+		cal.append(im)
+
+	return stack , cal , n , isN 
+
+
+
+# "."
+def gmr_3( stack , cal , n , isN ):
+
+	if isN:
+
+		cal.append(n)
+		n = 0
+		isN = False
+
+	stack.pop()	
+
+	return stack , cal , n , isN 
+
+
+
+# "+"
+def gmr_4( stack , cal , n , isN ):
+
+	if isN:
+
+		cal.append(n)
+		n = 0
+		isN = False
+
+	cal.append('+')
+
+	return stack , cal , n , isN 
+
+
+# "-"
+def gmr_5( stack , cal , n , isN ):
+
+	if isN:
+
+		cal.append(n)
+		n = 0
+		isN = False
+
+	cal.append('-')
+
+	return stack , cal , n , isN
+
+
+
+# "!"
+def gmr_6( stack , cal , n , isN ):
+
+	if isN:
+
+		cal.append(n)
+		n = 0
+		isN = False
+
+	print(calculating(cal))
+
+	return stack , cal , n , isN
+
+
 
 def lexer(code):
-    stack = []
-    cal = []
-    i = 0
-    n = 0
-    isN = False
 
-    while len(code) > i:
-        if code[i] == ';':
-            if isN:
-                cal.append(n)
-                n = 0
-                isN = False
-            stack.append(calculating(cal))
-        elif code[i] == ':':
-            if len(stack) == 0:
-                print("Error ; Stack is Empty")
-                exit(0)
-            else:
-                im = stack[len(stack)-1]
-                if isN:
-                    cal.append(str(n)+im)
-                    n = 0
-                    isN = False
-                else:
-                    cal.append(im)
-        elif code[i] == '.':
-            if isN:
-                cal.append(n)
-                n = 0
-                isN = False
-            if len(stack) == 0:
-                print("Error ; Stack is Empty")
-                exit(0)
-            else:
-                stack.pop()
-        elif code[i] == '+':
-            if isN:
-                cal.append(n)
-                n = 0
-                isN = False
-            cal.append('+')
-        elif code[i] == '-':
-            if isN:
-                cal.append(n)
-                n = 0
-                isN = False
-            cal.append('-')
-        elif code[i] == '!':
-            if isN:
-                cal.append(n)
-                n = 0
-                isN = False
-            print(calculating(cal))
-        elif code[i] >= '0' and code[i] <= '9':
-            n = n*10 + int(code[i])
-            isN = True
-        i += 1
 
-lexer("20;10;:.+:+10+10+10!")
+	stack = []
+	cal = []
+	n = 0
+	isN = False
 
-lexer("")
+
+	gmr_list = {
+
+		";" : gmr_1,
+		":" : gmr_2,
+		"." : gmr_3,
+		"+" : gmr_4,
+		"-" : gmr_5,
+		"!" : gmr_6
+
+	}
+
+
+	if code[-1] != "!":
+		print("Error")
+		exit(0)
+
+
+	for i in range(0,len(code)):
+
+			grm_run = gmr_list.get(code[i],"False")
+
+			if grm_run == "False":
+
+				pass
+
+
+			else:
+
+					stack , cal , n , isN = grm_run(stack , cal , n , isN)
+
+
+			if '0' <= code[i] <= '9':
+
+				n = n*10 + int(code[i])
+				isN = True
+
+
+
+
+if __name__ == "__main__":
+
+	code = input("semi > ")
+
+	lexer(code)
+    
