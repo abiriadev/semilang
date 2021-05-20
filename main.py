@@ -1,181 +1,59 @@
-import os
-
-def calculating(cal):
-
-	value = cal[0]
-
-	for i in range(1,len(cal)):
-
-		if cal[i] == '+':
-
-			i += 1
-
-			if cal[i] == '+' or cal[i] == '-':
-
-				print("Syntax Error ; Double operator")
-				exit(0)
-
-			value += cal[i]
-
-
-		elif cal[i] == '-':
-
-			i += 1
-
-			if cal[i] == '+' or cal[i] == '-':
-
-				print("Syntax Error ; Double operator")
-				exit(0)
-
-			value -= cal[i]
-
-
-	cal.clear()
-
-	return value
-
-
-
-# ";"
-def gmr_1( stack , cal , n , isN ):
-
-	if isN:
-
-		cal.append(n)
-		n = 0
-		isN = False
-
-	stack.append(calculating(cal))
-
-	return stack , cal , n , isN 
-
-
-
-# ":"
-def gmr_2( stack , cal , n , isN ):
-
-	im = stack[len(stack)-1]
-
-	if isN:
-
-		cal.append(str(n)+im)
-		n = 0
-		isN = False
-
-	else:
-
-		cal.append(im)
-
-	return stack , cal , n , isN 
-
-
-
-# "."
-def gmr_3( stack , cal , n , isN ):
-
-	if isN:
-
-		cal.append(n)
-		n = 0
-		isN = False
-
-	stack.pop()	
-
-	return stack , cal , n , isN 
-
-
-
-# "+"
-def gmr_4( stack , cal , n , isN ):
-
-	if isN:
-
-		cal.append(n)
-		n = 0
-		isN = False
-
-	cal.append('+')
-
-	return stack , cal , n , isN 
-
-
-# "-"
-def gmr_5( stack , cal , n , isN ):
-
-	if isN:
-
-		cal.append(n)
-		n = 0
-		isN = False
-
-	cal.append('-')
-
-	return stack , cal , n , isN
-
-
-
-# "!"
-def gmr_6( stack , cal , n , isN ):
-
-	if isN:
-
-		cal.append(n)
-		n = 0
-		isN = False
-
-	print(calculating(cal))
-
-	return stack , cal , n , isN
-
-
-
 def lexer(code):
+    stack = []
+    i = 0
+    n = 0
+    isN = False
 
-
-	stack = []
-	cal = []
-	n = 0
-	isN = False
-
-
-	gmr_list = {
-
-		";" : gmr_1,
-		":" : gmr_2,
-		"." : gmr_3,
-		"+" : gmr_4,
-		"-" : gmr_5,
-		"!" : gmr_6
-
-	}
-
-
-	if code[-1] != "!":
-		print("Error")
-		exit(0)
-
-
-	for i in range(0,len(code)):
-
-			grm_run = gmr_list.get(code[i],"False")
-
-			if grm_run == "False":
-
-				pass
-
-
-			else:
-
-					stack , cal , n , isN = grm_run(stack , cal , n , isN)
-
-
-			if '0' <= code[i] <= '9':
-
-				n = n*10 + int(code[i])
-				isN = True
-
-
-
+    while len(code) > i:
+        if code[i] == ';':
+            if isN:
+                stack.append(n)
+                n = 0
+                isN = False
+            else:
+                print("Syntax Error ; semicolon is not have number")
+                exit(0)
+        elif code[i] == ':':
+            if len(stack) < 1:
+                print("Error : Stack is Empty")
+                exit(0)
+            else:
+                stack.pop()
+        elif code[i] == '+':
+            if len(stack) < 2:
+                print("Error + Stack is Empty")
+                exit(0)
+            else:
+                a = stack.pop()
+                b = stack.pop()
+                stack.append(a+b)
+        elif code[i] == '-':
+            if len(stack) < 2:
+                print("Error + Stack is Empty")
+                exit(0)
+            else:
+                a = stack.pop()
+                b = stack.pop()
+                stack.append(a-b)
+        elif code[i] == '!':
+            if len(stack) < 1:
+                print("Error : Stack is Empty")
+                exit(0)
+            else:
+                print(stack.pop(), end='')
+        elif code[i] == '@':
+            if len(stack) < 1:
+                print("Error : Stack is Empty")
+                exit(0)
+            else:
+                print(chr(stack.pop()), end='')
+        elif code[i] >= '0' and code[i] <= '9':
+            n = n*10 + int(code[i])
+            isN = True
+        elif code[i] == '#':
+            while len(code) > i and code[i] != '\n':
+                i += 1
+        i += 1
 
 if __name__ == "__main__":
 
