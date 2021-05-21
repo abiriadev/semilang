@@ -1,185 +1,160 @@
 import os
 
+
 def calculating(cal):
 
-	value = cal[0]
+    value = cal[0]
 
-	for i in range(1,len(cal)):
+    for i in range(1, len(cal)):
 
-		if cal[i] == '+':
+        if cal[i] == "+":
 
-			i += 1
+            i += 1
 
-			if cal[i] == '+' or cal[i] == '-':
+            if cal[i] == "+" or cal[i] == "-":
 
-				print("Syntax Error ; Double operator")
-				exit(0)
+                print("Syntax Error ; Double operator")
+                exit(0)
 
-			value += cal[i]
+            value += cal[i]
 
+        elif cal[i] == "-":
 
-		elif cal[i] == '-':
+            i += 1
 
-			i += 1
+            if cal[i] == "+" or cal[i] == "-":
 
-			if cal[i] == '+' or cal[i] == '-':
+                print("Syntax Error ; Double operator")
+                exit(0)
 
-				print("Syntax Error ; Double operator")
-				exit(0)
+            value -= cal[i]
 
-			value -= cal[i]
+    cal.clear()
 
-
-	cal.clear()
-
-	return value
-
+    return value
 
 
 # ";"
-def gmr_1( stack , cal , n , isN ):
+def gmr_1(stack, cal, n, isN):
 
-	if isN:
+    if isN:
 
-		cal.append(n)
-		n = 0
-		isN = False
+        cal.append(n)
+        n = 0
+        isN = False
 
-	stack.append(calculating(cal))
+    stack.append(calculating(cal))
 
-	return stack , cal , n , isN 
-
+    return stack, cal, n, isN
 
 
 # ":"
-def gmr_2( stack , cal , n , isN ):
+def gmr_2(stack, cal, n, isN):
 
-	im = stack[len(stack)-1]
+    im = stack[len(stack) - 1]
 
-	if isN:
+    if isN:
 
-		cal.append(str(n)+im)
-		n = 0
-		isN = False
+        cal.append(str(n) + im)
+        n = 0
+        isN = False
 
-	else:
+    else:
 
-		cal.append(im)
+        cal.append(im)
 
-	return stack , cal , n , isN 
-
+    return stack, cal, n, isN
 
 
 # "."
-def gmr_3( stack , cal , n , isN ):
+def gmr_3(stack, cal, n, isN):
 
-	if isN:
+    if isN:
 
-		cal.append(n)
-		n = 0
-		isN = False
+        cal.append(n)
+        n = 0
+        isN = False
 
-	stack.pop()	
+    stack.pop()
 
-	return stack , cal , n , isN 
-
+    return stack, cal, n, isN
 
 
 # "+"
-def gmr_4( stack , cal , n , isN ):
+def gmr_4(stack, cal, n, isN):
 
-	if isN:
+    if isN:
 
-		cal.append(n)
-		n = 0
-		isN = False
+        cal.append(n)
+        n = 0
+        isN = False
 
-	cal.append('+')
+    cal.append("+")
 
-	return stack , cal , n , isN 
+    return stack, cal, n, isN
 
 
 # "-"
-def gmr_5( stack , cal , n , isN ):
+def gmr_5(stack, cal, n, isN):
 
-	if isN:
+    if isN:
 
-		cal.append(n)
-		n = 0
-		isN = False
+        cal.append(n)
+        n = 0
+        isN = False
 
-	cal.append('-')
+    cal.append("-")
 
-	return stack , cal , n , isN
-
+    return stack, cal, n, isN
 
 
 # "!"
-def gmr_6( stack , cal , n , isN ):
+def gmr_6(stack, cal, n, isN):
 
-	if isN:
+    if isN:
 
-		cal.append(n)
-		n = 0
-		isN = False
+        cal.append(n)
+        n = 0
+        isN = False
 
-	print(calculating(cal))
+    print(calculating(cal))
 
-	return stack , cal , n , isN
-
+    return stack, cal, n, isN
 
 
 def lexer(code):
 
+    stack = []
+    cal = []
+    n = 0
+    isN = False
 
-	stack = []
-	cal = []
-	n = 0
-	isN = False
+    gmr_list = {";": gmr_1, ":": gmr_2, ".": gmr_3, "+": gmr_4, "-": gmr_5, "!": gmr_6}
 
+    if code[-1] != "!":
+        print("Error")
+        exit(0)
 
-	gmr_list = {
+    for i in range(0, len(code)):
 
-		";" : gmr_1,
-		":" : gmr_2,
-		"." : gmr_3,
-		"+" : gmr_4,
-		"-" : gmr_5,
-		"!" : gmr_6
+        grm_run = gmr_list.get(code[i], "False")
 
-	}
+        if grm_run == "False":
 
+            pass
 
-	if code[-1] != "!":
-		print("Error")
-		exit(0)
+        else:
 
+            stack, cal, n, isN = grm_run(stack, cal, n, isN)
 
-	for i in range(0,len(code)):
+        if "0" <= code[i] <= "9":
 
-			grm_run = gmr_list.get(code[i],"False")
-
-			if grm_run == "False":
-
-				pass
-
-
-			else:
-
-					stack , cal , n , isN = grm_run(stack , cal , n , isN)
-
-
-			if '0' <= code[i] <= '9':
-
-				n = n*10 + int(code[i])
-				isN = True
-
-
+            n = n * 10 + int(code[i])
+            isN = True
 
 
 if __name__ == "__main__":
 
-	code = input("semi > ")
+    code = input("semi > ")
 
-	lexer(code)
-    
+    lexer(code)
